@@ -7,22 +7,27 @@ Guidance for AI coding agents working in this .NET 10 monorepo.
 ```text
 .
 ├── .github/workflows/   # GitHub Actions CI/CD workflows
-├── docs/                # Architecture, runbooks, and project documentation
-├── src/
+├── apps/
 │   ├── api/             # ASP.NET Core Web API apps
 │   ├── client/          # API client apps
-│   ├── lib/             # Shared libraries
-│   ├── spec/            # Specifications, schemas, and contracts
+│   ├── lib/             # Shared libraries and .NET contracts/DTOs
+│   ├── orchestration/   # .NET Aspire orchestration
+│   ├── ui/              # Frontend / UI applications
 │   └── worker/          # Background worker service apps
+├── docs/                # Architecture, runbooks, and project documentation
+├── infra/               # Infrastructure as Code, deployment manifests, and local env configs
+├── scripts/             # Build, automation, and developer utility scripts
+├── specs/               # API specifications (OpenAPI, TypeSpec, schemas)
 ├── tests/               # Automation, integration, and performance test projects
 ├── Directory.Build.props
 ├── Directory.Packages.props
 └── global.json
 ```
 
-- **Unit tests** live alongside the project they test under `src/` (for example, `src/api/<App>/<App>.Tests/` or a sibling `<Project>.Tests` folder next to `<Project>`).
+- **Unit tests** live alongside the project they test under `apps/` (for example, `apps/api/<App>/<App>.Tests/` or a sibling `<Project>.Tests` folder next to `<Project>`).
 - **Non-unit tests** (end-to-end, automation, load/performance) live under `tests/`.
 - **Solution files** use the `.slnx` format and are typically scoped per area (living alongside the relevant app or area rather than one monolithic root solution).
+- Remove `.gitkeep` files from folders when no longer needed.
 
 ## Toolchain & Build Configuration
 
@@ -65,7 +70,7 @@ Guidance for AI coding agents working in this .NET 10 monorepo.
 ## Testing Standards
 
 - Use **xUnit** (`xunit.v3`) as the testing framework, with `FluentAssertions` and `Moq` (plus `Microsoft.AspNetCore.Mvc.Testing` and `Testcontainers` for integration/API tests) as declared in `Directory.Packages.props`.
-- Write unit tests for business logic, validation, and edge cases alongside each project in `src/`.
+- Write unit tests for business logic, validation, and edge cases alongside each project in `apps/`.
 - Keep unit tests fast, deterministic, and isolated from external network/filesystem dependencies.
 - Place cross-service, automation, or performance test suites under `tests/`.
 
@@ -83,6 +88,6 @@ dotnet format --verify-no-changes
 ## Agent Workflow Expectations
 
 - Inspect existing project files and `Directory.Packages.props` before adding new dependencies or projects.
-- Reuse shared abstractions in `src/lib/` and contracts in `src/spec/` rather than duplicating types across services.
+- Reuse shared abstractions and contracts in `apps/lib/` rather than duplicating types across services.
 - Keep edits scoped to the task; do not modify unrelated projects or shared build configuration without reason.
 - Run `dotnet build` and `dotnet test` for affected projects after making code changes, and report the exact results.
